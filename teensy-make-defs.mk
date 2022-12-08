@@ -20,15 +20,38 @@
 
 .DEFAULT_GOAL := all
 
+# Paths to various tools (override in environment as necessary)
+#
 ARDUINO_PATH ?= $(HOME)/tools/arduino
 TEENSY3X_PATH ?= $(ARDUINO_PATH)/hardware/teensy/avr/cores/teensy3
 TOOLCHAIN_PATH ?= $(ARDUINO_PATH)/hardware/tools/arm/bin
 TOOLCHAIN_PREFIX ?= arm-none-eabi-
 TEENSY_LOADER_CLI ?= $(HOME)/tools/teensy/teensy_loader_cli/teensy_loader_cli
 
-CPU ?= cortex-m4
+# MCU Type (defaults to Teensy 3.1/3.2)
+#
+# MKL26Z64  -- Teensy LC
+# MK20DX256 -- Teensy 3.1/3.2
+# MK64FX512 -- Teensy 3.5
+# MK66FX1M0 -- Teensy 3.6
 CHIP ?= MK20DX256
+CHIP_LC = $(shell echo $(CHIP) | tr '[:upper:]' '[:lower:]')
+
+# CPU Clock Frequency (default based on MCU type)
+#
+ifeq ($(CHIP),MK20DX256)
 F_CPU ?= 96000000
+else ifeq ($(CHIP),MK64FX512)
+F_CPU ?= 120000000
+else
+F_CPU ?= 48000000
+endif
+
+ifeq ($(CHIP),MKL26Z64)
+CPU = cortex-m0
+else
+CPU = cortex-m4
+endif
 
 OPTIMIZATION ?= -Os
 DEBUG ?= -g
@@ -53,7 +76,7 @@ ASFLAGS = -mcpu=$(CPU)
 ARFLAGS = cr
 LDFLAGS = $(OPTIMIZATION) $(DEBUG) -Wl,--gc-sections -mcpu=$(CPU) -mthumb -T$(LDSCRIPT) 
 
-LDSCRIPT ?= $(TEENSY3X_PATH)/mk20dx256.ld
+LDSCRIPT ?= $(TEENSY3X_PATH)/$(CHIP_LC).ld
 
 VPATH = $(TEENSY3X_PATH)
 
@@ -134,4 +157,3 @@ TEENSY_OBJS := $(TEENSY_OBJS:.c=.o)
 $(TEENSY_LIB) : $(TEENSY_OBJS)
 	@echo Creating library $@
 	$(ECHO_CMD)$(AR) $(ARFLAGS) $@ $?
-
