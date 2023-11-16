@@ -14,12 +14,12 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L teensy:Teensy3.1 U1
+L pdp-1105-console-usb-adapter-rescue:Teensy3.1-teensy U1
 U 1 1 5E611984
 P 6700 3500
 F 0 "U1" H 6700 5137 60  0000 C CNN
 F 1 "Teensy 3.1/3.2" H 6700 5031 60  0000 C CNN
-F 2 "" H 6700 2750 60  0000 C CNN
+F 2 "Teensy:Teensy30_31_32_LC" H 6700 2750 60  0001 C CNN
 F 3 "" H 6700 2750 60  0000 C CNN
 	1    6700 3500
 	1    0    0    -1  
@@ -30,7 +30,7 @@ U 1 1 5E613419
 P 4000 3050
 F 0 "J1" H 4050 4350 50  0000 C CNN
 F 1 "Console Connector" H 4050 4250 50  0000 C CNN
-F 2 "" H 4000 3050 50  0001 C CNN
+F 2 "Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical" H 4000 3050 50  0001 C CNN
 F 3 "~" H 4000 3050 50  0001 C CNN
 	1    4000 3050
 	1    0    0    -1  
