@@ -6,7 +6,7 @@ The *PDP-11/05 Console USB Adapter* is a USB-to-serial bridge designed to interf
 
 <i><h3>A Special Note to PDP-11/05 Owners</h3></i>
 
-Unfortunately the Teensy 3.1/3.2 development board used in the Console Adapter is no longer in production.  This can make acquiring one difficult, or even impossible.  However, for those people who own an actual working PDP-11/05, I do have a few Teensy dev boards in my possession that I’m willing to share with fellow enthusiasts.  Please contact me via email to discuss the details on how to get one.
+Unfortunately the Teensy 3.1/3.2 development board used in the Console Adapter is no longer in production.  This can make acquiring one difficult or impossible.  However, for those people who own an actual working PDP-11/05, I do have a few Teensy dev boards in my possession that I’m willing to share with fellow enthusiasts.  Please contact me via email to discuss the details on how to get one (jay DOT logue AT gmail DOT com).
 
 ## Features
 
@@ -63,11 +63,11 @@ There are two changes which must be made to the Console Adapter to use the PDP-1
 
 1. The connection between USB power and the rest of the system must be severed by cutting a trace on the Teensy PCB board.  The Teensy PCB has been specifically designed to allow for this and the process of cutting it is straightforward.  Details on location of the trace and how to cut it can be found here: [Using External Power and USB](https://www.pjrc.com/teensy/external_power.html).  Note that the Teensy uses a multi-layer PCB.  So care must be taken to cut the trace on the outer-most layer only.  Do not press so hard as to damage the traces on the inner layers.
 
-2. The power selection jumper on the Console Adapter (JP1) must be set to the 2-3 position.
+2. The power selection jumper on the Console Adapter (JP1) must be set to the 1-2 position.
 
-Once the Console Adapter has been configured for PDP-11 power, it can be switched back to USB power by switching JP1 back to the 1-2 position.
+Once the Console Adapter has been configured for PDP-11 power, it can be switched back to USB power by switching JP1 back to the 2-3 position.
 
-**IMPORTANT NOTE**: Unless the power trace has been cut (step 1 above), JP1 must **never** be set to positon 2-3, as doing so could damage the host computer and/or the PDP-11.
+**IMPORTANT NOTE**: Unless the power trace has been cut (step 1 above), JP1 must **never** be set to positon 1-2, as doing so could damage the host computer and/or the PDP-11.
 
 ### Paper Tape Reader Mode
 
@@ -107,10 +107,12 @@ The Console Adapter is simple enough for most people to hand solder on a proto b
 - 1 [Teensy 3.1/3.2](https://www.pjrc.com/teensy/teensy31.html) development board
 - 1 MAX202 Dual RS-232 Line Driver/Receiver
 - 5 0.1uF ceramic disc capacitors
-- 1 2x20 male IDC header (for connecting to the PDP-11 SCL)
+- 1 2x20 male IDC header (J1)
 - 2 1x14 male pin headers (to be soldered to the Teensy)
 - 2 1x14 female pin headers (used as a socket for the Teensy)
-- 1 16-pin DIP socket (solder tail)
+- 1 1x3 male pin header (JP1 header)
+- 1 0.1" jumper (JP1 jumper)
+- 1 16-pin DIP socket, solder tail
 - 1 40-pin ribbon cable with 2 female IDC connectors (length as needed)
 - Suitable size proto board
 
