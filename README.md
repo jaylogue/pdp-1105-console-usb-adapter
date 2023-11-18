@@ -88,7 +88,7 @@ There are two changes which must be made to the Console Adapter to use the PDP-1
 
 1. The connection between USB power and the rest of the system must be severed by cutting a trace on the Teensy PCB board.  The Teensy PCB has been specifically designed to allow for this and the process of cutting it is straightforward.  Details on location of the trace and how to cut it can be found here: [Using External Power and USB](https://www.pjrc.com/teensy/external_power.html).  Note that the Teensy uses a multi-layer PCB.  So care must be taken to cut the trace on the outer-most layer only.  Do not press so hard as to damage the traces on the inner layers.
 
-2. The power selection jumper on the Console Adapter (JP1) must be set to the 1-2 position.
+2. The power selection jumper on the Console Adapter (JP1) must be set to the 1-2 position (PDP-11 power).
 
 Once the Console Adapter has been configured for PDP-11 power, it can be switched back to USB power by switching JP1 back to the 2-3 position.
 
@@ -108,14 +108,17 @@ Technically the PDP-11 has two "READER RUN" lines (+ and -) which are intended t
 
 ### Loopback Test Mode
 
-The Console Adapter supports a loopback test mode that can be used to test the basic functionality of sending and receiving characters.  While in test mode, any characters typed on either the host or auxiliary terminals are echoed back to the user.  Test mode is enabled by grounding a special “test mode” pin on the console connector.  Pin 38 was chosen as the test mode pin because it is unused by the PDP-11/05.
+The Console Adapter supports a loopback test mode that can be used to test the basic functionality of sending and receiving characters without connecting it to a PDP-11.  While in test mode, any characters typed on either the host or auxiliary terminals are echoed back to the user.  Test mode is enabled by grounding a special “test mode” pin on the console connector.  Pin 38 was chosen as the test mode pin because it is unused by the PDP-11/05.
 
-To place the Console Adapter in loopback test mode, place jumpers across the following pins on console connector and then apply power to the device:
+To place the Console Adapter in loopback test mode, do the following:
 
-- Pin 38 (Test Mode) to Pin 40 (GND)
-- Pin 4 (TX) to Pin 36 (RX)
+- Disconnect the Console Adapter from the PDP-11 and the host computer
+- Jumper pin 38 on the console connector (Test Mode) to pin 40 (GND)
+- Jumper pin 4 (TX) to pin 36 (RX)
+- Switch JP1 to the 2-3 position (USB power)
+- Connect the Console Adapter to the host
 
-To exit test mode, remove the jumpers and reboot.
+To exit test mode, remove the jumpers, switch JP1 to 1-2 and reboot.
 
 ## Schematic
 
