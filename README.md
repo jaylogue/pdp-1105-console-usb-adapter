@@ -2,46 +2,67 @@
 
 ![PDP-11/05 Console USB Adapter #1](images/pdp-1105-adapter-1.jpg)
 
-The *PDP-11/05 Console USB Adapter* is a USB-to-serial bridge designed to interface the console of a [PDP-11/05](http://gunkies.org/wiki/PDP-11/05) computer to a modern USB-enabled computer. It also provides an RS-232 compatible serial interface which can be used to connect a real RS-232 terminal. The project is based on the excellent [Teensy 3.1/3.2](https://www.pjrc.com/teensy/teensy31.html) development board from [PJRC](https://www.pjrc.com/), which provides an Arduino-compatible development environment running on a highly-capable ARM Cortex-M processor.
+The *PDP-11/05 Console USB Adapter* is a USB-to-TTL serial bridge designed specifically for use with a [PDP-11/05](http://gunkies.org/wiki/PDP-11/05) minicomputer. Its purpose is to connect the console of the PDP-11 to a modern, USB-enabled computer. It also provides an RS-232 compatible serial interface which can be used to connect a real terminal, such as a VT-100, to the PDP. The project is based on the excellent [Teensy 3.1/3.2](https://www.pjrc.com/teensy/teensy31.html) development board from [PJRC](https://www.pjrc.com/), which provides an Arduino-compatible development environment running on a highly-capable ARM Cortex-M processor.
 
-<i><h3>A Special Note to PDP-11/05 Owners</h3></i>
+The PDP-11/05 Console Adapter provide the following features:
 
-Unfortunately the Teensy 3.1/3.2 development board used in the Console Adapter is no longer in production.  This can make acquiring one difficult or impossible.  However, for those people who own an actual working PDP-11/05, I do have a few Teensy dev boards in my possession that I’m willing to share with fellow enthusiasts.  Please contact me via email to discuss the details on how to get one (jay DOT logue AT gmail DOT com).
 
-## Features
+- **Support for direct connection to the SCL connector on the back of the PDP-11/05**
+
 
 - **Automatic serial port configuration from the USB host**
 
 
-- **External baud rate generator (allows baud rates higher than 2400)**
+- **External baud rate generator, allowing baud rates higher than 2400**
 
 
-- **Adjustable baud rate (1200 to 38400) and serial format (8-N-1, 7-E-1, 7-O-1)**
+- **A range of baud rates (1200 to 38400) and serial formats (8-N-1, 7-E-1, 7-O-1)**
 
 
-- **Auxiliary RS-232 TTY interface (for connecting a real serial terminal)**
+- **Auxiliary RS-232 TTY interface for connecting a real serial terminal**
 
 
 - **Experimental paper tape reader mode**
 
 
+
+<i><h3>A Special Note to PDP-11/05 Owners</h3></i>
+
+Unfortunately the Teensy 3.1/3.2 development board used in the Console Adapter is no longer in production.  This makes acquiring one fairly difficult.  To help with this, I have a few Teensy dev boards in my possession that I’m willing to share with fellow PDP-11/05 owners.  For details on how to receive one, please contact me via email at **jay DOT logue AT gmail DOT com**.
+
+
+<hr>
+
+**[Theory of Operation](#theory-of-operation)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Auxiliary Terminal Interface](#auxiliary-terminal-interface)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Baud Rate Generation](#baud-rate-generation)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Host Selectable Baud Rate / Serial Format](#host-selectable-baud-rate--serial-format)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Status LED](#status-led)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Power Source](#power-source)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Paper Tape Reader Mode](#paper-tape-reader-mode)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Loopback Test Mode](#loopback-test-mode)**<br>
+**[Schematic](#schematic)**<br>
+**[Construction](#construction)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Building and Flashing the Firmware](#building-and-flashing-the-firmware)**<br>
+**[License](#license)**<br>
+
 ## Theory of Operation
 
-The PDP-11/05 Console USB Adapter operates as a simple USB-to-serial bridge.  To the host computer, the Console Adapter appears as a virtual RS-232 interface / COM port.  Software running on the Teensy shuttles characters back and forth between the host interface and a hardware UART connected to the console port of the PDP-11/05 (a.k.a. the SCL or Serial Communication Line).  The Console Adapter operates very similarly to common USB-to-TTL serial devices such as the FTDI FT232R serial cable, except that Console Adapter’s behavior can be fully customized via firmware.
+The PDP-11/05 Console USB Adapter operates as a simple USB-to-serial bridge.  To the host computer, the Console Adapter appears as a virtual RS-232 interface / COM port.  Software running on the Teensy shuttles characters back and forth between the host COM port and a UART connected to the SCL (Serial Communication Line) port of the PDP-11/05.  The Console Adapter operates very similarly to off-the-shelf USB-to-TTL serial devices such as the FTDI FT232R serial cable, with the exception that Console Adapter’s behavior is fully customizable in software.
 
-The serial signals exposed by the PDP-11 console port use TTL (0-5V) signaling instead of traditional EIA RS-232 levels (±12 V). Although the Teensy 3.1/3.2 itself is a 3 volt system, its inputs and outputs are 5 volt TTL-compatible, allowing it to be directly interfaced to the older system without level shifting.  _Note that this is not true of all Teensy models, so make substitutions carefully._
+The serial signals exposed by the PDP-11 SCL port use TTL (0-5V) signaling instead of traditional EIA RS-232 levels (±12 V). Although the Teensy 3.1/3.2 itself is a 3 volt system, its inputs and outputs are 5 volt TTL-compatible, allowing it to be directly interfaced to the older system without level shifting.  _Note that this is not true of all Teensy models, so make substitutions carefully._
 
-The serial input (RX) line on the PDP-11/05 is somewhat curious in that its levels are inverted as compared to a traditional TTL serial line.  Specifically, 0V represents a serial MARK and +5V represents a serial SPACE.  This is accommodated in the Console Adapter by using a special mode of the internal UART that inverts just the TX signal.
+The serial input (RX) line on the PDP-11/05 is somewhat curious in that its levels are inverted as compared to a traditional TTL serial line.  Specifically, 0V represents a serial MARK and +5V represents a serial SPACE.  This is accommodated in the Console Adapter by using a special mode of the Teensy’s UART that inverts just the TX signal.
 
 ### Auxiliary Terminal Interface
 
-In addition to the host USB interface, the Console Adapter provides a second serial interface which can be used to connect a traditional serial terminal, such as a VT-100.   An RS-232 level shifter (MAX202) is used to convert the signals to standard EIA levels, allowing most terminals of the era to be used.  When connected, the terminal functions as an auxiliary console for the PDP-11.  The configuration of the auxiliary terminal interface (baud rate, serial format) automatically tracks that of the PDP11 console interface, ensuring that the two connections are always in sync.
+In addition to the host USB interface, the Console Adapter provides a second serial interface which can be used to connect a traditional serial terminal such as a VT-100.  An RS-232 level shifter (MAX202) is used to convert the signals to standard EIA levels, allowing most terminals of the era to be used.  When connected, the terminal functions as an auxiliary console for the PDP-11.  The configuration of the auxiliary terminal interface (baud rate, serial format) automatically tracks that of the PDP11 console interface, ensuring that the two connections are always in sync.
 
-An auxiliary terminal can be used at the same time as the USB host interface, meaning that characters typed on either the host computer or the auxiliary terminal are forwarded to the PDP-11, and characters output by the PDP-11 appear on both the host computer and the auxiliary terminal.
+An auxiliary terminal can be used at the same time as the USB host interface.  When used this way characters typed on either the host computer or the auxiliary terminal are forwarded to the PDP-11, and characters output by the PDP-11 appear on both the host computer and the auxiliary terminal.
 
-It is also possible to use the Console Adapter with just an auxiliary terminal (i.e. without a host USB connection).  For this to work, the Console Adapter must be configured derive power from the PDP-11 system.  See the Power Source section below for how to do this.
+It is also possible to use the Console Adapter and an auxiliary terminal without a host USB connection.  For this to work, the Console Adapter must be configured derive power from the PDP-11 system.  See the [Power Source](#power-source) section below for how to do this.
 
-Support for the auxiliary terminal interface is enabled by default, but can be disabled in software via a compile-time option (AUX_TERM_UART_NUM).
+Support for the auxiliary terminal interface is enabled by default, but can be disabled in software by setting the compile-time option AUX_TERM_UART_NUM to 0.
 
 ### Baud Rate Generation
 
@@ -54,6 +75,10 @@ The Console USB Adapter operates as a standard USB serial device.  As such, it i
 Whenever the Console Adapter receives a serial configuration change message it automatically adjusts the configuration of the console UART and baud rate generator accordingly.  Configuration changes happen on the fly and can be made at any time.  If the auxiliary terminal interface is enabled, the UART for the auxiliary terminal is configured to match the console UART.
 
 By design, the PDP-11/05 CPU is hard-wired to use the 8-N-1 serial format.  However, with appropriate software support on the PDP side, 7-E-1 or 7-O-1 formats can also be used.  Based on this, the Console Adapter limits the serial format to these three formats, and any request to use another format is ignored.
+
+### Status LED
+
+The PDP-11/05 Console USB Adapter uses the LED on the Teensy to show status.  The status LED is lit while the system is powered and flashes briefly whenever there is console activity.
 
 ### Power Source
 
@@ -77,13 +102,20 @@ The PDP-11/05 console includes a signal called "READER RUN" which is designed to
 
 The paper tape reader mode in the Console Adapter is controlled using the virtual RTS signal from the USB host. Under normal circumstances (e.g. when using a terminal program on the USB host) the host asserts the virtual RTS signal over the USB connection to the Console Adapter indicating it has data to send.  When Console Adapter sees this signal, it operates in normal (non-paper tape reader) mode.
 
-If the host *de-asserts* RTS, the Console Adapter switches into paper tape reader mode.  In this mode, characters received from the USB host are buffered in the Console Adapter until the PDP-11 asserts the "READER RUN" signal.  Each time "READER RUN" is asserted, the Console Adapter feeds one character into the hardware UART attached to the PDP and waits for "READER RUN" to be assered again.  Characters flowing the other direction (from the PDP to the USB host) are unaffected.
+If the host *de-asserts* RTS, the Console Adapter switches into paper tape reader mode.  In this mode, characters received from the USB host are buffered in the Console Adapter until the PDP-11 asserts the "READER RUN" signal.  Each time "READER RUN" is asserted, the Console Adapter feeds one character into the hardware UART attached to the PDP and waits for "READER RUN" to be asserted again.  Characters flowing the other direction (from the PDP to the USB host) are unaffected.
 
 Technically the PDP-11 has two "READER RUN" lines (+ and -) which are intended to be used in a 20ma current loop circuit.  However, the positive side of the signal ("READER RUN +") is driven with a simple PNP transistor circuit configured as a high-side switch to +5V.  The Teensy reads this by enabling a pull-down resistor on its input pin.  The "READER RUN -" line is ignored entirely. 
 
-### Status LED
+### Loopback Test Mode
 
-The PDP-11/05 Console USB Adapter uses the LED on the Teensy to show status.  The status LED is lit while the system is powered and flashes briefly whenever there is console activity.
+The Console Adapter supports a loopback test mode that can be used to test the basic functionality of sending and receiving characters.  While in test mode, any characters typed on either the host or auxiliary terminals are echoed back to the user.  Test mode is enabled by grounding a special “test mode” pin on the console connector.  Pin 38 was chosen as the test mode pin because it is unused by the PDP-11/05.
+
+To place the Console Adapter in loopback test mode, place jumpers across the following pins on console connector and then apply power to the device:
+
+- Pin 38 (Test Mode) to Pin 40 (GND)
+- Pin 4 (TX) to Pin 36 (RX)
+
+To exit test mode, remove the jumpers and reboot.
 
 ## Schematic
 
@@ -105,7 +137,7 @@ Note that the Console Adapter schematic uses modern pin numbering for the consol
 The Console Adapter is simple enough for most people to hand solder on a proto board.  The required parts are:
 
 - 1 [Teensy 3.1/3.2](https://www.pjrc.com/teensy/teensy31.html) development board
-- 1 MAX202 Dual RS-232 Line Driver/Receiver
+- 1 MAX202 or MAX232A RS-232 Line Driver/Receiver
 - 5 0.1uF ceramic disc capacitors
 - 1 2x20 male IDC header (J1)
 - 2 1x14 male pin headers (to be soldered to the Teensy)
